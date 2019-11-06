@@ -21,7 +21,9 @@
     `git config` 设置为仓库级别  
     `git config --global` 系统全局级别设置  
     * git项目提交操作  
-    `git status` 查看当前项目状态
+    `git status` 查看当前项目状态  
+    `git add file` 追踪文件 添加到暂存区  
+    `git rm --cached file` 把文件从暂存区中撤回  
 # linux 常用命令
 * cd 切换目录 cd ~(表示用户根目录)  或 cd d:
 * ls 展示当前目录的文件
