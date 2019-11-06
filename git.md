@@ -22,10 +22,11 @@
     `git config --global` 系统全局级别设置  
     * git项目提交操作  
     `git status` 查看当前项目状态  
-    `git add file` 追踪文件 添加到暂存区  
-    `git rm --cached file` 把文件从暂存区中撤回  
+    `git add [filename]` 追踪文件 添加到暂存区  
+    `git commit -m "commit message" [filename]` 提交文件并写提交注释
+    `git rm --cached [filename]` 把文件从暂存区中撤回  
 # linux 常用命令
-* cd 切换目录 cd ~(表示用户根目录)  或 cd d:
+* cd [dirname] 切换目录 ~(表示用户根目录) 或 cd d:
 * ls 展示当前目录的文件
 * pwd 打印当前目录路径
-* cat 查看文件 cat .gifconfig
+* cat [filename] 查看文件 cat .gifconfig
