@@ -34,10 +34,14 @@
     `git log --online`  
     `git reflog `   HEAD@{移动到当前版本需要的步数}
     * 版本前进后退   
-    `git reset --hard` [索引值] 基于索引
-   
-            
-
+    `git reset --hard [索引值]` 基于索引前进后退  
+    `git reset --hard HEAD^` 只能往后退 n个^退n个版本 
+    `git reset --hard HEAD~n` 向后回退n个版本  
+    reset **参数**对比  
+        * --soft 仅仅移动**本地库** HEAD指针
+        * --mixed 移动**本地库** 和 **暂存区**
+        * --hard 移动 **本地库** 重置 **暂存区** 和 **工作区**  
+    
 # linux 常用命令
 * `cd [dirname]` 切换目录 ~(表示用户根目录) 或 cd d:
 * `ls` 展示当前目录的文件

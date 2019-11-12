@@ -9,3 +9,6 @@ h2{
     font-size: 30px;
     font-weight: 600;
 }
+b,strong{
+    color: rgb(250, 102, 76);
+}
