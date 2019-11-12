@@ -17,18 +17,20 @@
     `gif config --global user.email phk_20@foxmail.com`
 
 * ## Git命令
-    * 本地库初始化 (先切换到工作目录下):   
-    `git init `  
     * git配置  
     `git config` 设置为仓库级别  
     `git config --global` 系统全局级别设置  
+    ---
+    * 本地库初始化 (先切换到工作目录下):   
+    `git init `  
     * git项目提交操作  
     `git status` 查看当前项目状态  
     `git add [filename]` 追踪文件 添加到暂存区  
-    `git commit -m "commit message" [filename]` 提交文件并写提交注释  
+    `git commit -m "commit message" [filename]` 提交文件并写提交注释 
     `git rm --cached [filename]` 把文件从暂存区中撤回  
+    ---
     * 查看提交记录  
-    每条记录对应一个index
+    每条记录对应一个index  
     `git log` 查看提交记录 多屏显示 和linux命令操作相同  
     `git log --pretty=oneline`  
     `git log --online`  
@@ -41,7 +43,15 @@
         * --soft 仅仅移动**本地库** HEAD指针
         * --mixed 移动**本地库** 和 **暂存区**
         * --hard 移动 **本地库** 重置 **暂存区** 和 **工作区**  
-    
+    * 版本差异  
+    `git diff [filename]` **工作区**与**暂存区**对比  
+    `git diff [本地库历史版本] [filename]` **工作区**与**本地库**对比 不带文件名 比较多个文件
+    ---
+    * 分支操作  
+    `git branch -v` 查看所有分支  
+    `git branch [name]` 创建分支  
+    `git checkout [name]` 切换分支  
+ 
 # linux 常用命令
 * `cd [dirname]` 切换目录 ~(表示用户根目录) 或 cd d:
 * `ls` 展示当前目录的文件
@@ -51,3 +61,4 @@
     * 空格向下翻页
     * b向上翻页
     * q退出
+* ctrl+l 清屏
