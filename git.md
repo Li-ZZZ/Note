@@ -51,6 +51,17 @@
     `git branch -v` 查看所有分支  
     `git branch [name]` 创建分支  
     `git checkout [name]` 切换分支  
+    `git merge [name]` 合并分支 先切换到master分支(被合并分支)  
+    合并冲突  
+    <<<<< **HEAD**  本分支修改的内容  
+    =======  
+    \>>>>>>  **其他分支**修改的内容  
+    自己编辑完文件**删除特殊符号**后保存退出 再add commit(不能带文件名)
+    ---
+    * 远程库  
+    `git remote -v` 查看远程库信息 (fetch 用来取回)(push 用来推送)  
+    `git remote add origin URL` 用origin代替URL
+    
  
 # linux 常用命令
 * `cd [dirname]` 切换目录 ~(表示用户根目录) 或 cd d:
