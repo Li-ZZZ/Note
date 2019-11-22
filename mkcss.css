@@ -2,12 +2,13 @@
     font-size: 19px;
 }
 h1{
+
     font-size: 40px;
     font-weight: 600;
 }
 h2{
     font-size: 30px;
-    font-weight: 600;
+    font-weight: 500;
 }
 b,strong{
     color: rgb(250, 102, 76);
