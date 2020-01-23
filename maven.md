@@ -12,8 +12,15 @@
   - [仓库的分类](#%e4%bb%93%e5%ba%93%e7%9a%84%e5%88%86%e7%b1%bb)
   - [仓库保存的内容：Maven工程](#%e4%bb%93%e5%ba%93%e4%bf%9d%e5%ad%98%e7%9a%84%e5%86%85%e5%ae%b9maven%e5%b7%a5%e7%a8%8b)
 - [Maven依赖](#maven%e4%be%9d%e8%b5%96)
-  - [依赖范围<spoce>](#%e4%be%9d%e8%b5%96%e8%8c%83%e5%9b%b4spoce)
+  - [依赖范围\<Scope>](#%e4%be%9d%e8%b5%96%e8%8c%83%e5%9b%b4scope)
+  - [依赖传递](#%e4%be%9d%e8%b5%96%e4%bc%a0%e9%80%92)
+  - [依赖排除](#%e4%be%9d%e8%b5%96%e6%8e%92%e9%99%a4)
+  - [依赖冲突](#%e4%be%9d%e8%b5%96%e5%86%b2%e7%aa%81)
+  - [统一管理依赖版本号](#%e7%bb%9f%e4%b8%80%e7%ae%a1%e7%90%86%e4%be%9d%e8%b5%96%e7%89%88%e6%9c%ac%e5%8f%b7)
+  - [依赖继承](#%e4%be%9d%e8%b5%96%e7%bb%a7%e6%89%bf)
+- [聚合](#%e8%81%9a%e5%90%88)
 - [Maven生命周期](#maven%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f)
+- [依赖查找网站](#%e4%be%9d%e8%b5%96%e6%9f%a5%e6%89%be%e7%bd%91%e7%ab%99)
 
 # 背景
 ## 构件工具演变
@@ -83,7 +90,7 @@
   version：**版本号**  
   &lt;version> 1.0.0 &lt;/version>  
   Maven工程的坐标与仓库中路径是对应的
-
+  
 
 # Maven仓库
 ## 仓库的分类
@@ -99,9 +106,11 @@
   - 我们自己开发的Maven工程
 
 # Maven依赖
-   Maven依赖解析信息时会到**本地仓库**找被依赖的jar包。  
-  对于我们自己开发的Maven工程，使用`mvn install`命令安装到本地仓库
-## 依赖范围<spoce>
+  - Maven依赖解析信息时会到**本地仓库**找被依赖的jar包。  
+  - 对于我们自己开发的Maven工程，使用`mvn install`命令安装到本地仓库  
+
+  ## 依赖范围\<Scope>
+  默认为compile
   - compile
   - [x] 对主程序有效
   - [x] 对测试程序有效
@@ -116,6 +125,74 @@
   - [ ]  参与打包  
   例子:servlet-api.jar  
   因为Tomcat容器提供了某些jar包，而开发时并没有这些jar包，部署时会被忽略。
+  ## 依赖传递
+  依赖具有传递性，Maven会自动将所有需要依赖的自动添加到当前工程在，拓扑序吧
+  - 可以传递的依赖不必在每个模块工程都重复声明，只需要在**最底层**工程依赖一次即可
+  - 注意：非**compile**范围的依赖不能传递
+  ## 依赖排除
+  ```
+  <dependency>
+    <exclusion>
+      <groupId><\groudId> //设置排除的坐标即可
+      <artifactId><\artifactId>
+    <\exclusion>
+  <\dependency>
+  ```
+  ## 依赖冲突
+  - 当依赖传递过来的一个jar包有不同版本的时候，传递路径短的jar包版本优先
+  - 当两者路径长度相同时，再dependency内先声明者优先
+  ## 统一管理依赖版本号
+  在pom.xml文件定义一个自定义标签  
+  在其他依赖的version标签用${}来代替
+  ```
+  <properties>
+    <phk.version>1.0.0.RELEASE<\phk.version>
+  <\properties>
+
+  <groupId>servlet<\groudId> 
+  <artifactId>servlet<\artifactId>
+  <version>${phk.verson}<\version>
+  ```
+  ## 依赖继承
+  专程建立一个父工程来管理所有子工程的依赖，打包方式为pom  
+  父工程：  
+  配置依赖管理标签
+  ```
+  <dependencyManagement>
+    <dependenies>
+      <groupId>servlet<\groudId> 
+      <artifactId>servlet<\artifactId>
+      <version>4.9<\version>
+      <scope>provided<\scope>
+    <\dependenies>
+  <\dependencyManagement>
+  ```
+  子工程声明父工程
+  ```
+  <parent>
+     <groupId><\groudId>  //父工程坐标
+      <artifactId><\artifactId>
+      <version><\version>
+      <!--以当前工程的pom为基准到父工程pom相对路径-->
+      <relativePath><\relativePath>
+  <\parent>
+  ```
+  子工程中删除重复部分：  
+  例如删除\<groupID>,\<version>  
+  配置继承后执行安装命令时要先安装父工程
+# 聚合
+  作用:一键安装各个模块工程  
+  配置方式：在父工程加入\<modules>
+  ```
+  <modules>
+  <!--指定各个子工程相对路径-->
+    <module>../web<\module>
+    <module>../UI<\**module**>
+    <module><\module>
+    <module><\module>
+  <\modules>
+  ```
+  使用方式：在聚合工程上运行`mvn install`
 # Maven生命周期
 1. 各个构件环节执行的顺序：不能打乱顺序，必须按照既定的正确顺序来执行。
 2. Maven的核心程序中定义了抽象的生命周期，生命周期中各个阶段的具体任务是由插件来完成的。
@@ -124,3 +201,7 @@
    - 各个阶段和插件的目标是对应的。
    - 相似的目标由特定的插件来完成。
  
+# 依赖查找网站
+www.mvnrepository.com
+
+2020.1.23完结
