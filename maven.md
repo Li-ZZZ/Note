@@ -83,12 +83,14 @@
 
 # Maven坐标
   使用三个向量唯一定位一个Maven工程  
-  groupid：公司或组织**域名倒序**+**项目名**  
-  &lt;groupid> com.phk.web &lt;/groupid>  
-  artifactid：**模块名**  
-  &lt;artifactid> socket &lt;/artifactid>  
-  version：**版本号**  
-  &lt;version> 1.0.0 &lt;/version>  
+  ```xml
+ groupid:公司或组织域名倒序+项目名
+  <groupid>com.phk.web</groupid>  
+  artifactid:模块名
+  <artifactid>socket</artifactid>  
+  version:版本号
+  <version>1.0.0</version>  
+  ```
   Maven工程的坐标与仓库中路径是对应的
   
 
@@ -133,10 +135,10 @@
   - 可以传递的依赖不必在每个模块工程都重复声明，只需要在**最底层**工程依赖一次即可
   - 注意：非**compile**范围的依赖不能传递
   ## 依赖排除
-  ```
+  ```xml
   <dependency>
     <exclusion>
-      <groupId><\groudId> //设置排除的坐标即可
+      <groupId><\groudId> <!--设置排除的坐标即可-->
       <artifactId><\artifactId>
     <\exclusion>
   <\dependency>
@@ -147,7 +149,7 @@
   ## 统一管理依赖版本号
   在pom.xml文件定义一个自定义标签  
   在其他依赖的version标签用${}来代替
-  ```
+  ```xml
   <properties>
     <phk.version>1.0.0.RELEASE<\phk.version>
   <\properties>
@@ -160,7 +162,7 @@
   专程建立一个父工程来管理所有子工程的依赖，打包方式为pom  
   父工程：  
   配置依赖管理标签
-  ```
+  ```xml
   <dependencyManagement>
     <dependenies>
       <groupId>servlet<\groudId> 
@@ -171,7 +173,7 @@
   <\dependencyManagement>
   ```
   子工程声明父工程
-  ```
+  ```xml
   <parent>
      <groupId><\groudId>  //父工程坐标
       <artifactId><\artifactId>
@@ -186,7 +188,7 @@
 # 聚合
   作用:一键安装各个模块工程  
   配置方式：在父工程加入\<modules>
-  ```
+  ```xml
   <modules>
   <!--指定各个子工程相对路径-->
     <module>../web<\module>
