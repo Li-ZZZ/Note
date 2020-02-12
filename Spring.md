@@ -33,6 +33,9 @@ commons-logging-1.1.3.jar
 ```
 2. 写配置
 src目录下创建的Spring Bean Configuration(Spring配置文件)  
+src源码包为类路径的开始，所有src里面的东西都会被合并放到bin目录下  
+java项目:/bin/  
+web项目:/WEB-INF/classes/  
 ```java
 //写一个person类，给这个类注册
 class person{
@@ -41,6 +44,7 @@ class person{
 }
 ```
 ```xml
+<!--ioc.xml 配置文件-->
 <beans>
     <!--
     一个Bean标签可以注册一个组件(对象，类)
@@ -54,4 +58,18 @@ class person{
     </bean>
 </beans>
 ```
-1. 测试  
+3. 测试  
+```java
+public void test()
+{
+    //ApplicationContext:代表ioc容器
+    //ClassPathXmlApplicationContext:当前应用的xml配置文件
+    //根据spring配置文件得到ioc容器对象，在类路径下寻找，容器启动就会创建好对象
+    ApplicationContext ioc= new ClassPathXmlApplicationContext("ioc.xml");
+    //在磁盘路径下寻找ioc.xml
+    //ApplicationContext ioc= new FileSystemXmlApplicationContext("F://ioc.xml");
+    //容器帮我们创建了对象并赋值
+    Person bean=(Person) ioc.getBean("01");//id
+    System.out.println(bean);
+}
+```
