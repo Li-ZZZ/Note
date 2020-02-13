@@ -39,8 +39,16 @@ web项目:/WEB-INF/classes/
 ```java
 //写一个person类，给这个类注册
 class person{
-    char lastname;
+    String lastname;
     int age;
+    void setLastname(String lastname)
+    {
+        this.lastname=lastname;
+    }
+    String getLastname()
+    {
+        return this.lastname;
+    }
 }
 ```
 ```xml
@@ -55,21 +63,45 @@ class person{
         <!--使用property标签给person对象的属性赋值-->
         <property name="last" value="John"></property>
         <property name="age" value="18"></property>
+    </bean> 
+    <bean id="02" class="com.phk.person">
+        <!--使用property标签给person对象的属性赋值-->
+        <property name="last" value="Marry"></property>
+        <property name="age" value="22"></property>
     </bean>
 </beans>
 ```
 3. 测试  
+- 实验1：根据id从容器中获取对象
 ```java
-public void test()
+public class Test
 {
+    @Test
+    public void test01()
+    {
     //ApplicationContext:代表ioc容器
     //ClassPathXmlApplicationContext:当前应用的xml配置文件
-    //根据spring配置文件得到ioc容器对象，在类路径下寻找，容器启动就会创建好对象
+    //根据spring配置文件得到ioc容器对象，在类路径下寻找
     ApplicationContext ioc= new ClassPathXmlApplicationContext("ioc.xml");
     //在磁盘路径下寻找ioc.xml
     //ApplicationContext ioc= new FileSystemXmlApplicationContext("F://ioc.xml");
-    //容器帮我们创建了对象并赋值
+    //容器帮我们创建了对象并赋值，调用setter方法赋值
     Person bean=(Person) ioc.getBean("01");//id
     System.out.println(bean);
+    }
 }
+```
+> **注意**:  
+    1. 容器中对象的创建在容器创建完成时就已经创建好了  
+    2. 同一个组件在ioc容器中是单实例的，即获取两次也是同一份对象  
+    3. 如果获取不存在的组件报异常：NoSuchBeanDefinitionException  
+    4. ioc容器在创建组件对象的时候，会利用setter方法为javaBean的属性赋值  
+    5. javaBean的属性名是由setter方法来决定的  
+    例如:setLastname，即属性名为lastname  
+    所以所有的setter/getter都自动生产，不要改动
+
+实验2：根据bean类型从容器获取对象
+```java
+@#
+public void test02
 ```
