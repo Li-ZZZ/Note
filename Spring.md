@@ -41,6 +41,11 @@ web项目:/WEB-INF/classes/
 class person{
     String lastname;
     int age;
+    person(String lastname,int age)
+    {
+        this.lastname=lastname;
+        this.age=age;
+    }
     void setLastname(String lastname)
     {
         this.lastname=lastname;
@@ -65,7 +70,7 @@ class person{
         <property name="age" value="18"></property>
     </bean> 
     <bean id="02" class="com.phk.person">
-        <!--使用property标签给person对象的属性赋值-->
+        <!--使用property标签给person对象的属性赋值：调用getter/setter-->
         <property name="last" value="Marry"></property>
         <property name="age" value="22"></property>
     </bean>
@@ -95,13 +100,28 @@ public class Test
     1. 容器中对象的创建在容器创建完成时就已经创建好了  
     2. 同一个组件在ioc容器中是单实例的，即获取两次也是同一份对象  
     3. 如果获取不存在的组件报异常：NoSuchBeanDefinitionException  
-    4. ioc容器在创建组件对象的时候，会利用setter方法为javaBean的属性赋值  
+    4. ioc容器在创建组件对象的时候，会利用setter方法为javaBean的属性赋值,property标签的作用  
     5. javaBean的属性名是由setter方法来决定的  
     例如:setLastname，即属性名为lastname  
     所以所有的setter/getter都自动生产，不要改动
 
 实验2：根据bean类型从容器获取对象
 ```java
-@#
-public void test02
+@Test
+public void test02(){
+    //如果ioc容器中这个class的类型有多个bean，查找就会报错
+    Person bean=ioc.getBean(Person.class);
+    System.out.println(bean);
+    //id+class查找不需要强制类型转换
+    Person bean2=ioc.getBean("02",Person.class);
+}
+```
+实验3：利用有参构造器来给属性赋值
+```xml
+<bean id="03" class="com.phk.person">
+    <!--调用有参构造器来给属性赋值-->
+    <!--可省略name属性，但要严格按照构造器参数的顺序来写-->
+    <constructor-arg name="lastname" value="barry"></constructor-arg>
+    <constructor-arg name="age" value="12"></constructor-arg>
+</bean> 
 ```
