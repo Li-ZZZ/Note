@@ -14,8 +14,8 @@
 
 **容器**：管理所有的组件(有功能的类)，容器可以自动地探查出那些组件(类)需要用到另一些组件(类)
 
-**DI**(Dependency Injection)依赖注入：  
-容器能知道哪个组件(类)运行的时候，需要另一个类(组件)；容器通过**反射**的形式，将容器中准备好的对象注入(利用反射给属性赋值)  
+**DI**：(Dependency Injection)依赖注入：  
+容器能知道哪个组件(类)运行的时候，需要另一个类(组件)，容器通过**反射**的形式，将容器中准备好的对象注入(利用反射给属性赋值)  
 
 > 只要容器管理的组件，都能使用容器提供的强大功能
 
@@ -37,10 +37,25 @@ src源码包为类路径的开始，所有src里面的东西都会被合并放�
 java项目:/bin/  
 web项目:/WEB-INF/classes/  
 ```java
+//写一个Car类 放在person中
+class Car{
+    private String carname;
+    private String color;
+}
+//写一个book类 放在person中的list
+class Book{
+    private String bookName;
+    private String author;
+}
 //写一个person类，给这个类注册
 class person{
-    String lastname;
-    int age;
+    //基本类型直接使用<property>来赋值，自动进行类型转换
+    private String lastname;
+    private int age;
+    //
+    private Car car;
+    private List<Book> books;
+    private Map<String,Object>map;
     person(String lastname,int age)
     {
         this.lastname=lastname;
@@ -77,7 +92,7 @@ class person{
 </beans>
 ```
 3. 测试  
-- 实验1：根据id从容器中获取对象
+-  实验1：根据id从容器中获取对象
 ```java
 public class Test
 {
@@ -105,7 +120,7 @@ public class Test
     例如:setLastname，即属性名为lastname  
     所以所有的setter/getter都自动生产，不要改动
 
-实验2：根据bean类型从容器获取对象
+- 实验2：根据bean类型从容器获取对象
 ```java
 @Test
 public void test02(){
@@ -116,12 +131,79 @@ public void test02(){
     Person bean2=ioc.getBean("02",Person.class);
 }
 ```
-实验3：利用有参构造器来给属性赋值
+- 实验3：利用有参构造器来给属性赋值
 ```xml
 <bean id="03" class="com.phk.person">
     <!--调用有参构造器来给属性赋值-->
     <!--可省略name属性，但要严格按照构造器参数的顺序来写-->
-    <constructor-arg name="lastname" value="barry"></constructor-arg>
-    <constructor-arg name="age" value="12"></constructor-arg>
+    <!-- index="0",为参数指定索引，从0开始-->
+    <!-- 构造器重载的情况下type可以指定参数的类型-->
+    <constructor-arg name="lastname" value="barry" index="0"></constructor-arg>
+    <constructor-arg name="age" value="12" type="java.lang.Integer" index="1"></constructor-arg>
 </bean> 
+<!--通过p名称空间为bean赋值-->
+<!--名称空间：在xml中名称空间用来防止标签重复-->
+<!--1.导入p命名空间 2.写带前缀的标签
+    Example:两个name标签的区分
+    <book>
+        <b:name>西游记</b:name>
+        <author>
+            <a:name>吴承恩</a:name>
+            <gender>男</gender>
+        </author>
+    </book>
+    <bean id="06" class="com.phk.person" p:age="18"></bean>
+-->
+```
+- 实验4：正确的为各种属性赋值
+```xml
+<bean id="car01" class="com.phk.car">
+    <property name="carname" value="宝马">
+    <property name="color" value="黑色">
+</bean>
+
+<bean id="01" class="com.phk.person">
+    <property name="lastname">
+        <!--进行复杂的赋值,赋值为null-->
+        <null/>
+    </property>
+
+    <property name="car" ref="car01">
+    <!--ref:代表引用外面的一个值,填id-->
+    <!-- 相当于: car=ioc.getBean("car01");  -->
+    </property>
+
+    <property name="car" >
+    <!-- 用bean标签创建相当于: car=new Car(); 内部bean不能被获取 只能内部使用 -->
+        <bean class="com.phk.car">
+            <property name="carName" value="Yellow"></property>
+        </bean>
+    </property>
+</bean>
+
+<bean id="02" class="com.phk.person">
+    <property name="books">
+         <!--相当于:books=new ArrayList<Book>();-->
+        <list>
+            <!--给list标签添加每一个元素-->
+            <bean class="com.phk.Book" p:bookName="西游记"></bean>
+            <!--引用外部的一个元素-->
+            <ref bean="book01"/>
+        </list>
+    </property>
+
+    <!--Map<String,Object>maps;-->
+    <property name="maps">
+        <!--相当于:maps=new LinkedHashMap<>();-->
+        <map>
+            <!--一个entry表示一个键值对 -->
+            <entry key="key01" value="hello"></entry>
+            <entry key="key02" value="19"></entry>
+            <entry key="key03" value-ref="book01"></entry>
+            <entry key="key04">
+                <bean ...></bean>
+            </entry>
+        </map>
+    </property>
+</bean>
 ```
