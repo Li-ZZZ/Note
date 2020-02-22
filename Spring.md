@@ -203,7 +203,47 @@ public void test02(){
             <entry key="key04">
                 <bean ...></bean>
             </entry>
+            <entry key="key05">
+                <map></map>
+            </entry>
         </map>
     </property>
 </bean>
+
+<!-- util名称空间创建集合类型的bean，方便别人引用 -->
+<!-- 先导入util名词空间 -->
+<!--相当于：new LinkedHashMap,必须要有id,list同理-->
+<util:map id="map01">
+    <entry ...></entry>
+</util:map>
+
+<bean id="01" class="com.phk.person">
+    <!--引用已经设置好的map-->
+    <property name="maps" ref="map01">
+    </property>
+</bean>
+
+<!-- 级联属性赋值：级联属性：属性的属性-->
+<bean id="person04" class="com.phk.person">
+    <!--为car赋值时改变car的价格-->
+    <property name="car" ref="car01"></property>
+    <!--级联属性可以修改属性的属性，但注意原来的bean的值可能被修改，因为是ref引用地址 -->
+    <property name="car.price" val="900000"></property>
+</bean>
 ```
+
+- 实验5：通过继承实现bean配置信息的重用
+```xml
+<!--abstract="true" ：这个bean的配置是抽象的，不能获取实例，只能用来被别人继承-->
+<bean id="person01" class="com.phk.person" abstract="true">
+    <property name="lastname" value="herry"></property>
+    <property name="age" value="16"></property>
+    <property name="email" value="phk.com"></property>
+</bean>
+<!-- parent:指定当前的bean的配置信息继承于哪个-->
+<bean id="person02" class="com.phk.person" parent="person01" >
+    <property name="lastname" value="jerry"></property>
+</bean>
+
+```
+- 实验6：测试bean的作用域，单实例和多实例bean
