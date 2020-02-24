@@ -22,16 +22,15 @@
 # 给容器注册组件
 
 框架编写流程：
-1. 导包
-```
+## 1.导包
 核心容器
-spring-beans-4.0.0.RELEASE.jar
-spring-context-4.0.0.RELEASE.jar
-spring-core-4.0.0.RELEASE.jar
-spring-expression-4.0.0.RELEASE.jar
-commons-logging-1.1.3.jar
-```
-2. 写配置
+>spring-beans-4.0.0.RELEASE.jar  
+spring-context-4.0.0.RELEASE.jar  
+spring-core-4.0.0.RELEASE.jar  
+spring-expression-4.0.0.RELEASE.jar  
+commons-logging-1.1.3.jar  
+
+## 2. 写配置
 src目录下创建的Spring Bean Configuration(Spring配置文件)  
 src源码包为类路径的开始，所有src里面的东西都会被合并放到bin目录下  
 java项目:/bin/  
@@ -91,8 +90,8 @@ class person{
     </bean>
 </beans>
 ```
-3. 测试  
--  实验1：根据id从容器中获取对象
+## 3.测试  
+### 实验1：根据id从容器中获取对象
 ```java
 public class Test
 {
@@ -120,7 +119,7 @@ public class Test
     例如:setLastname，即属性名为lastname  
     所以所有的setter/getter都自动生产，不要改动
 
-- 实验2：根据bean类型从容器获取对象
+### 实验2：根据bean类型从容器获取对象
 ```java
 @Test
 public void test02(){
@@ -131,7 +130,7 @@ public void test02(){
     Person bean2=ioc.getBean("02",Person.class);
 }
 ```
-- 实验3：利用有参构造器来给属性赋值
+### 实验3：利用有参构造器来给属性赋值
 ```xml
 <bean id="03" class="com.phk.person">
     <!--调用有参构造器来给属性赋值-->
@@ -155,7 +154,7 @@ public void test02(){
     <bean id="06" class="com.phk.person" p:age="18"></bean>
 -->
 ```
-- 实验4：正确的为各种属性赋值
+### 实验4：正确的为各种属性赋值
 ```xml
 <bean id="car01" class="com.phk.car">
     <property name="carname" value="宝马">
@@ -232,7 +231,7 @@ public void test02(){
 </bean>
 ```
 
-- 实验5：通过继承实现bean配置信息的重用
+### 实验5：通过继承实现bean配置信息的重用
 ```xml
 <!--abstract="true" ：这个bean的配置是抽象的，不能获取实例，只能用来被别人继承-->
 <bean id="person01" class="com.phk.person" abstract="true">
@@ -246,4 +245,173 @@ public void test02(){
 </bean>
 
 ```
-- 实验6：测试bean的作用域，单实例和多实例bean
+### 实验6：测试bean的作用域，单实例和多实例bean
+```xml
+<!--
+    bean的作用域：指定bean是否为单实例，默认：单实例
+    使用scope标签
+    prototype：多实例的
+        1、容器启动默认不会去创建多实例bean
+        2、获取的时候创建这个bean
+        3、每次获取都会创建一个新的对象
+    singleton：单实例
+        1、在容器启动之前已经创建好对象，保存在容器中了
+        2、任何时候获取都是获取之前创建好的那个对象
+    request：在web环境下，同一次请求创建一个bean实例(没用)
+    Session：在web环境下，同一次会话创建一个bean实例(没用)
+-->
+<bean id="Book" class="com.phk.Book" scope="prototype" ></bean>
+```
+### 实验7：配置配置静态工厂方法创建bean、实例工厂方法创建的bean、FactoryBean ※
+飞机类
+```java
+class AirPlane{
+    String captain;
+    String personNumber;
+}
+```
+bean的创建默认是框架利用**反射机制**new出来的实例  
+工厂模式：工厂帮我们创建对象,有一个专门创建对象的**类**，就是工厂类  
+```java
+import AirPlane;
+AirPlane ap=AirPlaneFactory.getAirPlane(String name);
+```
+静态工厂：工厂本身不需要创建对象，通过调用类的**静态方法** 对象=工厂类.get();  
+动态工程：工厂本身**需要创建对象**  
+    工厂类 工厂对象=new 工厂类();  
+    工厂对象.get();  
+
+静态工厂
+```java
+import com.phk.AirPlane;
+class AirPlaneStaticFactory{
+    //静态方法
+    public static AirPlane getAirPlane(String name)
+    {
+        AirPlane airplane=new Airplane();
+        airplane.setCaptain(name);
+        return airplane;
+    }
+}
+```
+实例工厂
+```java
+import com.phk.AirPlane;
+class AirPlaneStaticFactory{
+    //普通方法
+    public AirPlane getAirPlane(String name)
+    {
+        AirPlane airplane=new Airplane();
+        airplane.setCaptain(name);
+        return airplane;
+    }
+}
+```
+```xml
+<!--静态工厂  factory-method指定工厂方法-->
+<bean id="plane01" class="com.phk.AirPlaneStaticFactory" factory-method="getAirPlane" >
+    <!--静态方法传参数-->
+    <constructor-arg  name="name" value="Jerry"></constructor-arg>
+</bean>
+
+<!--实例工厂-->
+<bean id="planefactory" class="com.phk.AirPlaneStaticFactory"></bean>
+
+<!--
+    factory-bean:指定工厂的id
+    factory-method:指定工厂方法
+-->
+<bean id="plane02" class="com.phk.AirPlane" factory-bean="planefactory" factory-method="getAirPlane">
+    <constructor-arg name="name" value="Harry"></constructor-arg>
+</bean>
+```
+FactoryBean接口  
+实现了**FactoryBean**接口的类是Spring可以认识的工厂类  
+Spring会自动调用工厂方法创建实例  
+1. 编写一个FactoryBean的实现类  
+
+```java
+public class MyFactoryBean implements FactoryBean<Book>{
+    /*
+    getObject：工厂方法
+    返回创建对象
+    */
+    public Book getObject()
+    {
+        Book book=new book();
+        book.setName("西游记");
+        return book;
+    }
+    /*
+    返回创建对象的类型
+    Spring会自动调用这个方法来确认创建的对象是什么类型
+    */
+    public Class<?> getObjectType(){
+        return Book.class;
+    }
+    /*
+    isSingleton:是单例吗？
+    */
+    public boolean isSingleton()
+    {
+        return false;
+    }
+}
+```
+2. 在spring配置文件中进行注册  
+```xml
+<!--注册实现类-->
+<!--
+    这个bean就会返回创建好相应的对象 Book对象
+    1、ioc容器启动的时候不会创建实例
+    2、FactoryBean：获取的时候才创建对象
+-->
+<bean id="MyFactory" class="com.phk.MyFactoryBean"></bean>
+```
+### 实验8：创建带有生命周期方法的bean
+生命周期：bean的创建和销毁  
+自定义一些生命周期方法，spring在创建或销毁就会调用生命周期方法
+```xml
+<!--
+    destroy-method：指定类中的销毁方法
+    init-method：指定类中的初始化方法
+    两个方法都不能带参数
+    多实例的bean不会调用销毁方法
+-->
+<bean id="book01" class="com.phk.Book" destroy-method="destroy" init-method="init"></bean>
+```
+### 实验9：后置处理器
+MyBeanPostProcessor实现**BeanPostProcessor**接口  
+会在bean创建对象的前后调用两个方法
+```java
+public class MyBeanPostProcessor implements BeanPostProcessor
+{
+    /*
+    初始化前调用
+    */
+    public Object postProcessBeforeInitialization(Object bean,Stirng name)
+    {
+        sysout("before执行");
+        return bean;
+    }
+    /*
+    初始化后调用
+    */
+    public Object postProcessAfterInitialization(Object bean,Stirng name)
+    {
+        sysout("After执行");
+        return bean;
+    }
+}
+```
+注册后置处理器
+```xml
+<!--注册后置处理器-->
+<bean id="beanPostProcessor" class="com.phk.MyBeanPostProcess"></bean>
+<!--
+    创建bean
+    before->init->after
+    即使bean没有设置init方法，后置处理器也会照样工作
+-->
+<bean id="car01" class="com.phk.car" ></bean>
+```
