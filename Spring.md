@@ -1,5 +1,24 @@
 <link rel="stylesheet" type="text/css" href="mkcss.css">
 
+- [Spring](#spring)
+- [IOC(Inversion Of Control)反转控制](#iocinversion-of-control%e5%8f%8d%e8%bd%ac%e6%8e%a7%e5%88%b6)
+- [给容器注册组件](#%e7%bb%99%e5%ae%b9%e5%99%a8%e6%b3%a8%e5%86%8c%e7%bb%84%e4%bb%b6)
+  - [1.导包](#1%e5%af%bc%e5%8c%85)
+  - [2. 写配置](#2-%e5%86%99%e9%85%8d%e7%bd%ae)
+  - [3.实验](#3%e5%ae%9e%e9%aa%8c)
+    - [实验1：根据id从容器中获取对象](#%e5%ae%9e%e9%aa%8c1%e6%a0%b9%e6%8d%aeid%e4%bb%8e%e5%ae%b9%e5%99%a8%e4%b8%ad%e8%8e%b7%e5%8f%96%e5%af%b9%e8%b1%a1)
+    - [实验2：根据bean类型从容器获取对象](#%e5%ae%9e%e9%aa%8c2%e6%a0%b9%e6%8d%aebean%e7%b1%bb%e5%9e%8b%e4%bb%8e%e5%ae%b9%e5%99%a8%e8%8e%b7%e5%8f%96%e5%af%b9%e8%b1%a1)
+    - [实验3：利用有参构造器来给属性赋值](#%e5%ae%9e%e9%aa%8c3%e5%88%a9%e7%94%a8%e6%9c%89%e5%8f%82%e6%9e%84%e9%80%a0%e5%99%a8%e6%9d%a5%e7%bb%99%e5%b1%9e%e6%80%a7%e8%b5%8b%e5%80%bc)
+    - [实验4：正确的为各种属性赋值](#%e5%ae%9e%e9%aa%8c4%e6%ad%a3%e7%a1%ae%e7%9a%84%e4%b8%ba%e5%90%84%e7%a7%8d%e5%b1%9e%e6%80%a7%e8%b5%8b%e5%80%bc)
+    - [实验5：通过继承实现bean配置信息的重用](#%e5%ae%9e%e9%aa%8c5%e9%80%9a%e8%bf%87%e7%bb%a7%e6%89%bf%e5%ae%9e%e7%8e%b0bean%e9%85%8d%e7%bd%ae%e4%bf%a1%e6%81%af%e7%9a%84%e9%87%8d%e7%94%a8)
+    - [实验6：测试bean的作用域，单实例和多实例bean](#%e5%ae%9e%e9%aa%8c6%e6%b5%8b%e8%af%95bean%e7%9a%84%e4%bd%9c%e7%94%a8%e5%9f%9f%e5%8d%95%e5%ae%9e%e4%be%8b%e5%92%8c%e5%a4%9a%e5%ae%9e%e4%be%8bbean)
+    - [实验7：配置配置静态工厂方法创建bean、实例工厂方法创建的bean、FactoryBean ※](#%e5%ae%9e%e9%aa%8c7%e9%85%8d%e7%bd%ae%e9%85%8d%e7%bd%ae%e9%9d%99%e6%80%81%e5%b7%a5%e5%8e%82%e6%96%b9%e6%b3%95%e5%88%9b%e5%bb%babean%e5%ae%9e%e4%be%8b%e5%b7%a5%e5%8e%82%e6%96%b9%e6%b3%95%e5%88%9b%e5%bb%ba%e7%9a%84beanfactorybean-%e2%80%bb)
+    - [实验8：创建带有生命周期方法的bean](#%e5%ae%9e%e9%aa%8c8%e5%88%9b%e5%bb%ba%e5%b8%a6%e6%9c%89%e7%94%9f%e5%91%bd%e5%91%a8%e6%9c%9f%e6%96%b9%e6%b3%95%e7%9a%84bean)
+    - [实验9：后置处理器](#%e5%ae%9e%e9%aa%8c9%e5%90%8e%e7%bd%ae%e5%a4%84%e7%90%86%e5%99%a8)
+    - [实验10：xml的自动装配](#%e5%ae%9e%e9%aa%8c10xml%e7%9a%84%e8%87%aa%e5%8a%a8%e8%a3%85%e9%85%8d)
+    - [实验11：SqEL测试 (Spring Expression Language)](#%e5%ae%9e%e9%aa%8c11sqel%e6%b5%8b%e8%af%95-spring-expression-language)
+    - [实验12:通过注解分别创建Dao、service、Controller](#%e5%ae%9e%e9%aa%8c12%e9%80%9a%e8%bf%87%e6%b3%a8%e8%a7%a3%e5%88%86%e5%88%ab%e5%88%9b%e5%bb%badaoservicecontroller)
+
 # Spring 
 主要有IOC和AOP
 
@@ -90,7 +109,7 @@ class person{
     </bean>
 </beans>
 ```
-## 3.测试  
+## 3.实验  
 ### 实验1：根据id从容器中获取对象
 ```java
 public class Test
@@ -415,3 +434,53 @@ public class MyBeanPostProcessor implements BeanPostProcessor
 -->
 <bean id="car01" class="com.phk.car" ></bean>
 ```
+### 实验10：xml的自动装配
+自动装配(自动赋值 仅限于**自定义**类型)
+```xml
+<bean id="car" class="com.phk.car">
+    <property name="color" value="白色"></property>
+</bean>
+<!--
+
+    autowire="default/no":不自动装配
+    autowire="byName":按照名字
+        private Car car; 以属性名作为id在容器中找到一个组件给他赋值
+        car = ioc.getBean("car");
+    autowire="byType":按照属性的类型，如果容器中有多个该类型的对象，会异常
+        car = ioc.getBean(Car.class);
+    autowire="constructor": 按照有参构造器
+        public Person(Car car)
+            按照构造器赋值：
+            1、先按照构造器参数的类型进行装配，没有就null
+            2、如果找到多个对象，则按参数的名作为id进行匹配，找不到就null
+
+    List<Book> books 容器会把所有的book装配到list中
+-->
+<bean id="person01" class="com.phk.person" autowire="byType">
+</bean>
+```
+### 实验11：SqEL测试 (Spring Expression Language)
+#{} 括号中的为EL
+```xml
+<bean id="person04" class="com.phk.person">
+    <property name="salary" value="#{123.456*12}"></property>
+    <!--引用某个bean的属性值-->
+    <property name="lastname" value="#{book01.bookname}"></property>
+    <!--引用其他bean 相当于ref-->
+    <property name="car" value="#{car}">
+    <!--
+        调用静态方法：UUID.randomUUID().toString()
+        #{T(全类名).静态方法名(arg0,arg1)}
+    -->
+    <property name="email" value="#{T(java.util.UUID).randomUUID().toString().subString(0,1)}"></property>
+    <!--调用非静态方法 对象名.方法名-->
+    <property name="email" value="#{book01.getBookName()}"></property>
+</bean>
+```
+### 实验12:通过注解分别创建Dao、service、Controller
+Spring有4个注解：
+某个类上添加任何一个注解都能快速的将这个组件加入到ioc容器管理中
+- @Controller 
+- @Service
+- @Repository
+- @Component
