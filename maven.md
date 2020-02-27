@@ -58,7 +58,7 @@
   - 安装：  
     Maven特定的概念——将打包得到的文件**复制**到**仓库**中指定位置
   - 部署：  
-    将动态Web工程生成的**war包**复制到s**ervlet容器**的指定**目录**下，使其可以运行
+    将动态Web工程生成的**war包**复制到**servlet容器**的指定**目录**下，使其可以运行
 
 # Maven目录结构
     项目名  
@@ -78,7 +78,7 @@
   `mvn test-compile` 编译测试程序  
   `mvn test` 执行测试  
   `mvn package` 打包
-  `mvn install` 对于maven工程安装到本地仓库
+  `mvn install` 对于maven工程安装到本地仓库  
   `mvn site` 生成站点 
 
 # Maven坐标

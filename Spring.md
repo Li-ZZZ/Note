@@ -479,8 +479,36 @@ public class MyBeanPostProcessor implements BeanPostProcessor
 ```
 ### 实验12:通过注解分别创建Dao、service、Controller
 Spring有4个注解：
-某个类上添加任何一个注解都能快速的将这个组件加入到ioc容器管理中
-- @Controller 
-- @Service
-- @Repository
-- @Component
+某个类上添加任何一个注解都能快速的将这个组件加入到ioc容器管理中  
+- @Controller 控制器：给控制层(servlet包下的)组件添加注解  
+- @Service 业务逻辑：给业务逻辑层的组件添加注解 bookservice  
+- @Repository 给数据层(持久化层,dao层)的组件添加注解  
+- @Component 给不属于以上几层的组件添加注解  
+注解可以随便加，spring底层不会去验证这个组件是否是对应层  
+但推荐给各自层加各自的注解  
+
+步骤:
+- 给组件添加注解
+- 告诉spring自动扫描注解，依赖context名称空间
+- 一定要导入aop包
+```xml
+<!--
+    context：component-scan：自动组件扫描
+    base-package：指定扫描的基础包，把包下所有加了注解的类扫描进ioc容器
+-->
+<context:component-scan base-package="com.phk"></context:component-scan>
+```
+```java
+@Service
+class BookServlet{
+
+}
+
+@Test
+public void test(){
+    ioc.getBean("bookServlet");
+}
+``
+使用注解加入容器的组件和使用配置加入的组件默认行为都是一样的  
+1. 组件id，默认就是组件的类名首字母小写  
+2. 组件的作用域默认是单例的  
