@@ -18,6 +18,7 @@
     - [实验10：xml的自动装配](#%e5%ae%9e%e9%aa%8c10xml%e7%9a%84%e8%87%aa%e5%8a%a8%e8%a3%85%e9%85%8d)
     - [实验11：SqEL测试 (Spring Expression Language)](#%e5%ae%9e%e9%aa%8c11sqel%e6%b5%8b%e8%af%95-spring-expression-language)
     - [实验12:通过注解分别创建Dao、service、Controller](#%e5%ae%9e%e9%aa%8c12%e9%80%9a%e8%bf%87%e6%b3%a8%e8%a7%a3%e5%88%86%e5%88%ab%e5%88%9b%e5%bb%badaoservicecontroller)
+    - [实验13:指定扫描包时包括或不包括的类](#%e5%ae%9e%e9%aa%8c13%e6%8c%87%e5%ae%9a%e6%89%ab%e6%8f%8f%e5%8c%85%e6%97%b6%e5%8c%85%e6%8b%ac%e6%88%96%e4%b8%8d%e5%8c%85%e6%8b%ac%e7%9a%84%e7%b1%bb)
 
 # Spring 
 主要有IOC和AOP
@@ -490,7 +491,7 @@ Spring有4个注解：
 步骤:
 - 给组件添加注解
 - 告诉spring自动扫描注解，依赖context名称空间
-- 一定要导入aop包
+- 一定要导入aop包,支持加注解模式
 ```xml
 <!--
     context：component-scan：自动组件扫描
@@ -506,9 +507,49 @@ class BookServlet{
 
 @Test
 public void test(){
-    ioc.getBean("bookServlet");
+    Object o1=ioc.getBean("bookServlet");
+    Object o2=ioc.getBean("bookServlet");
+    sysout(o1==o2)// true
+    
 }
-``
+/*
 使用注解加入容器的组件和使用配置加入的组件默认行为都是一样的  
 1. 组件id，默认就是组件的类名首字母小写  
 2. 组件的作用域默认是单例的  
+*/
+
+@Service("book") //给id改名字改成book
+@Scope(value="prototype") //给组件设置为多实例
+class BookServlet{
+
+}
+@Test
+public void test(){
+    Object o1=ioc.getBean("book");
+    Object o2=ioc.getBean("book");
+    sysout(o1==o2)// false
+}
+```
+### 实验13:指定扫描包时包括或不包括的类
+```xml
+<context:component-scan base-package="com.phk">
+    <!--
+        exclude=-filter 排除过滤器
+        type="annotation" ：指定排除规则，表示按注解排除
+        expression="" ：注解的全类名
+
+        type="assignable" : 按照具体的类进行排除
+        expression="" ：全类名
+    -->
+    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller">
+    </contextl:exclude-filter>
+</context:component-scan>
+
+<!--use-default-filters 默认全扫描，设置为false 全部不扫描-->
+<context:component-scan base-package="com.phk" use-default-filters="false">
+    <!--include 使用方法与exclude相同-->
+    <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller">
+    </contextl:include-filter>
+</context:component-scan>
+```
+
