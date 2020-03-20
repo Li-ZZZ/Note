@@ -49,7 +49,8 @@ qps = 462.9
 
 # Synchronized 同步锁
 https://blog.csdn.net/zjy15203167987/article/details/82531772
-
+## Synchronized的可见性
+https://blog.csdn.net/u012312373/article/details/44983523
 ## 实现原理
 **Synchronized**可以保证方法或者代码块在运行时，同一时刻只有一个方法可以进入到临界区，同时它还可以保证共享变量的内存可见性
 
@@ -191,6 +192,9 @@ Java内存模型规定了所有的变量都存储在**主内存**中，每条线
 - 在Java中，可以使用synchronized和volatile来保证多线程之间操作的有序性。实现方式有所区别：
 - volatile关键字会**禁止指令重排**。synchronized关键字保证同一时刻只允许一条线程操作
 
+## volatile不具备原子性
+https://www.jianshu.com/p/f74044782927
+
 # hashMap
 https://blog.csdn.net/qq_37113604/article/details/81353626  
 https://blog.csdn.net/qq_37113604/article/details/81353626
@@ -200,7 +204,7 @@ hashMap用数组+链表/红黑树实现
 用key的hashcode来找到数组的下标  
 当两个key的hashcode相同时就会产生冲突，用链表来储存  
 当链表长度大于8的时候链表会转变为红黑树  
-链表存储的是键值对,调用get方法先定位到数组下标，再遍历用equal方法来比较key
+链表存储的是键值对,调用hash方法先定位到数组下标，再遍历用equal方法来比较key
 ```java
 static class Node<K,V> implements Map.Entry<K,V>
 {
@@ -226,7 +230,7 @@ https://blog.csdn.net/zjkC050818/article/details/78345819?locationNum=9&fps=1
 https://www.jianshu.com/p/7b1c8093ddca
 
 常见面试题 
-https://blog.csdn.net/weixin_42716620/article/details/82888576
+<https://blog.csdn.net/weixin_42716620/article/details/82888576>
 
 HTTP与HTTPS的区别
 - https协议需要到ca申请证书，一般免费证书较少，因而需要一定费用。
@@ -247,7 +251,29 @@ HTTP与HTTPS的区别
 - 基于时间片的轮转调度算法
 
 # 用户态和内核态
-https://blog.csdn.net/qq_29996285/article/details/88078906
+<https://blog.csdn.net/qq_29996285/article/details/88078906>
 
 # 数据库索引
-https://blog.csdn.net/qq_36071795/article/details/83956068
+<https://blog.csdn.net/qq_36071795/article/details/83956068>
+
+# B树 B+树
+<https://www.cnblogs.com/51life/p/10303696.html>
+
+<https://blog.csdn.net/xiaojin21cen/article/details/99827577>
+
+# TCP
+三次握手和四次挥手  
+https://blog.csdn.net/qq_39192189/article/details/81428551  
+为什么tcp可靠  
+[https://blog.csdn.net/Awille/article/details/79748193 ](https://www.jianshu.com/p/ )
+
+https://www.zhihu.com/question/24853633
+
+【问题1】为什么连接的时候是三次握手，关闭的时候却是四次握手？
+
+答：因为当Server端收到Client端的SYN连接请求报文后，可以直接发送SYN+ACK报文。其中ACK报文是用来应答的，SYN报文是用来同步的。但是关闭连接时，当Server端收到FIN报文时，很可能并不会立即关闭SOCKET，所以只能先回复一个ACK报文，告诉Client端，"你发的FIN报文我收到了"。只有等到我Server端所有的报文都发送完了，我才能发送FIN报文，因此不能一起发送。故需要四步握手。
+
+## 为什么不能是两次握手
+如果是两次握手，当c给s发送连接请求，s收到后给c发送确认响应，此时s就认为已经建立连接了，但如果该确认响应丢失了，c就不知道s是否收到自己的连接请求，就会关闭不接受后面的数据报文，而s就会向c发送报文浪费资源
+
+https://www.nowcoder.com/tutorial/94/a6035e5453f946aba0615705f94ca1e2

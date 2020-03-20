@@ -19,6 +19,7 @@
     - [实验11：SqEL测试 (Spring Expression Language)](#%e5%ae%9e%e9%aa%8c11sqel%e6%b5%8b%e8%af%95-spring-expression-language)
     - [实验12:通过注解分别创建Dao、service、Controller](#%e5%ae%9e%e9%aa%8c12%e9%80%9a%e8%bf%87%e6%b3%a8%e8%a7%a3%e5%88%86%e5%88%ab%e5%88%9b%e5%bb%badaoservicecontroller)
     - [实验13:指定扫描包时包括或不包括的类](#%e5%ae%9e%e9%aa%8c13%e6%8c%87%e5%ae%9a%e6%89%ab%e6%8f%8f%e5%8c%85%e6%97%b6%e5%8c%85%e6%8b%ac%e6%88%96%e4%b8%8d%e5%8c%85%e6%8b%ac%e7%9a%84%e7%b1%bb)
+    - [实验14 使用@Autowired注解自动赋值](#%e5%ae%9e%e9%aa%8c14-%e4%bd%bf%e7%94%a8autowired%e6%b3%a8%e8%a7%a3%e8%87%aa%e5%8a%a8%e8%b5%8b%e5%80%bc)
 
 # Spring 
 主要有IOC和AOP
@@ -442,7 +443,6 @@ public class MyBeanPostProcessor implements BeanPostProcessor
     <property name="color" value="白色"></property>
 </bean>
 <!--
-
     autowire="default/no":不自动装配
     autowire="byName":按照名字
         private Car car; 以属性名作为id在容器中找到一个组件给他赋值
@@ -552,4 +552,19 @@ public void test(){
     </contextl:include-filter>
 </context:component-scan>
 ```
+### 实验14 使用@Autowired注解自动赋值
+```xml
+<!--先把注解的类扫描进容器-->
+<context:component-scan base-package="com.phk"></context:component-scan>
+```
+```java
+@Service
+class A{
 
+}
+@Component
+class B{
+    @AutoWired //使用这个注解 自动在容器中给寻找A的对象 给该变量赋值
+    private A a;
+}
+```
