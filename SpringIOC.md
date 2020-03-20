@@ -1,7 +1,6 @@
 <link rel="stylesheet" type="text/css" href="mkcss.css">
 
-- [Spring](#spring)
-- [IOC(Inversion Of Control)反转控制](#iocinversion-of-control%e5%8f%8d%e8%bd%ac%e6%8e%a7%e5%88%b6)
+- [Spring IOC(Inversion Of Control)反转控制](#spring-iocinversion-of-control%e5%8f%8d%e8%bd%ac%e6%8e%a7%e5%88%b6)
 - [给容器注册组件](#%e7%bb%99%e5%ae%b9%e5%99%a8%e6%b3%a8%e5%86%8c%e7%bb%84%e4%bb%b6)
   - [1.导包](#1%e5%af%bc%e5%8c%85)
   - [2. 写配置](#2-%e5%86%99%e9%85%8d%e7%bd%ae)
@@ -20,11 +19,11 @@
     - [实验12:通过注解分别创建Dao、service、Controller](#%e5%ae%9e%e9%aa%8c12%e9%80%9a%e8%bf%87%e6%b3%a8%e8%a7%a3%e5%88%86%e5%88%ab%e5%88%9b%e5%bb%badaoservicecontroller)
     - [实验13:指定扫描包时包括或不包括的类](#%e5%ae%9e%e9%aa%8c13%e6%8c%87%e5%ae%9a%e6%89%ab%e6%8f%8f%e5%8c%85%e6%97%b6%e5%8c%85%e6%8b%ac%e6%88%96%e4%b8%8d%e5%8c%85%e6%8b%ac%e7%9a%84%e7%b1%bb)
     - [实验14 使用@Autowired注解自动赋值](#%e5%ae%9e%e9%aa%8c14-%e4%bd%bf%e7%94%a8autowired%e6%b3%a8%e8%a7%a3%e8%87%aa%e5%8a%a8%e8%b5%8b%e5%80%bc)
+    - [实验15 使用spring的单元测试](#%e5%ae%9e%e9%aa%8c15-%e4%bd%bf%e7%94%a8spring%e7%9a%84%e5%8d%95%e5%85%83%e6%b5%8b%e8%af%95)
+    - [实验16 泛型依赖注入](#%e5%ae%9e%e9%aa%8c16-%e6%b3%9b%e5%9e%8b%e4%be%9d%e8%b5%96%e6%b3%a8%e5%85%a5)
 
-# Spring 
-主要有IOC和AOP
 
-# IOC(Inversion Of Control)反转控制
+# Spring IOC(Inversion Of Control)反转控制
 从主动的new资源变成被动的接受资源  
 **控制**：资源的获取方式 
 - 主动式  
@@ -564,7 +563,81 @@ class A{
 }
 @Component
 class B{
-    @AutoWired //使用这个注解 自动在容器中给寻找A的对象 给该变量赋值
+    @Qualifier("abc")//指定id去ioc寻找组件
+    @Autowired //使用这个注解 自动在容器中给寻找A的对象 给该变量赋值
     private A a;
 }
 ```
+@Autowired原理  
+1. 先按类型去容器中找对应组件：a=ioc.getBean(A.class);
+   1. 找到一个就赋值
+   2. 没找到抛出异常
+   3. 找到多个（父类、子类）
+      1. 按照变量名作为id继续匹配
+         1. 变量名没有匹配成功过报错
+2. Autowired一定会装配上，否则报错，不会NULL
+3. Autowired(required=false)，该属性表示如果装配失败就赋值NULL
+
+@Qualifier：指定id去ioc容器中寻找组件，不使用变量名
+```java
+//给方法中的参数自动装配
+//该方法在容器启动的时候自动运行
+@Autowired 
+public void haha(B b,@Qualifiter("a")A aaa) //Qualifiter指定id去容器寻找
+{
+    sysout(b+"-----"+a);
+}
+```
+@Autowired、@Resource、@Inject：都是自动装配的注解  
+@Autowired:功能最强大，spring自己的注解  
+@Resource:j2ee的注解，java的标准  
+区别：@Resource扩展性更强，如果切换其他容器框架@Resource还可以使用，@Autowired不行
+
+### 实验15 使用spring的单元测试
+1. 导包：spring单元测试包spring-test-4.0.0.0.RELEASE.jar
+2. @ContextConfiguration(locations="")指定spring的配置文件
+3. @RunWith指定用哪种驱动进行单元测试，默认junit
+   1. @RunWith(SpringJunit4ClassRunner.class)
+   使用spring的单元测试模块来执行@test的测试方法
+4. 不需要ioc.getBeans()获取对象
+```java
+@ContextConfiguration(locations="classpath:applicationContext.xml")
+@RunWith(SpringJunit4ClassRunner.class)
+public class IOCTest{
+    @Autowired
+    A a;
+    @Test
+    public void test01{
+        sysout(a);
+    }
+}
+```
+
+### 实验16 泛型依赖注入
+```java
+public class BaseService<T>{
+    @Autowired
+    private BaseDao<T> baseDao;
+    public save(){
+        sysout(baseDao);
+    }
+}
+@Service
+public class BookService extends BaseService<Book>
+{
+/*
+继承了BaseService 相当于拥有一个成员变量：
+@Autowired  可以使用自动装配，寻找BaseDao<Book>类型的组件
+BaseDao<Book> baseDao 虽然是private，但子类一样拥有，只是不能访问
+*/
+}
+
+public abstract class BaseDao<T>{
+    public abstract void save();
+}
+@Repository
+public class BookDao extends BaseDao<Book>{
+    //该组件类型就是BaseDao<Book>
+}
+```
+IOC结束 2020.3.20
