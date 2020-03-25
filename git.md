@@ -12,6 +12,7 @@
   - [远程库 GitHub](#%e8%bf%9c%e7%a8%8b%e5%ba%93-github)
   - [fork](#fork)
 - [linux 常用命令](#linux-%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4)
+- [git 别名设置](#git-%e5%88%ab%e5%90%8d%e8%ae%be%e7%bd%ae)
 # Git设置签名  
 git需要用户设置一个**签名**  
 > 用户名: **username**  
@@ -102,5 +103,5 @@ PS：
     * b向上翻页
     * q退出
 * `ctrl+L` 清屏 
-
-完结 11.13
+# git 别名设置
+`git config --global alias.st status` 用st来代替status  全局配置别名
