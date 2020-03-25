@@ -21,6 +21,7 @@
     - [实验14 使用@Autowired注解自动赋值](#%e5%ae%9e%e9%aa%8c14-%e4%bd%bf%e7%94%a8autowired%e6%b3%a8%e8%a7%a3%e8%87%aa%e5%8a%a8%e8%b5%8b%e5%80%bc)
     - [实验15 使用spring的单元测试](#%e5%ae%9e%e9%aa%8c15-%e4%bd%bf%e7%94%a8spring%e7%9a%84%e5%8d%95%e5%85%83%e6%b5%8b%e8%af%95)
     - [实验16 泛型依赖注入](#%e5%ae%9e%e9%aa%8c16-%e6%b3%9b%e5%9e%8b%e4%be%9d%e8%b5%96%e6%b3%a8%e5%85%a5)
+- [总结](#%e6%80%bb%e7%bb%93)
 
 
 # Spring IOC(Inversion Of Control)反转控制
@@ -71,7 +72,7 @@ class person{
     //基本类型直接使用<property>来赋值，自动进行类型转换
     private String lastname;
     private int age;
-    //
+    
     private Car car;
     private List<Book> books;
     private Map<String,Object>map;
@@ -640,4 +641,11 @@ public class BookDao extends BaseDao<Book>{
     //该组件类型就是BaseDao<Book>
 }
 ```
+# 总结
+1. ioc 是一个容器，帮我们管理所有的组件
+2. 依赖注入@Autowired 自动赋值
+3. 某个组件要用到Spring提供的IOC、AOP必须要加入到容器中
+4. 容器启动，创建所有单例的bean
+5. Autowired从容器中寻找符合要求的beans
+6. IOC底层其实是一个map保存所有的bean，提供外界获取功能
 IOC结束 2020.3.20
