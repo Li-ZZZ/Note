@@ -13,6 +13,7 @@
   - [fork](#fork)
 - [linux 常用命令](#linux-%e5%b8%b8%e7%94%a8%e5%91%bd%e4%bb%a4)
 - [git 别名设置](#git-%e5%88%ab%e5%90%8d%e8%ae%be%e7%bd%ae)
+- [git 标签操作](#git-%e6%a0%87%e7%ad%be%e6%93%8d%e4%bd%9c)
 # Git设置签名  
 git需要用户设置一个**签名**  
 > 用户名: **username**  
@@ -80,7 +81,8 @@ PS：
 ## 远程库 GitHub  
 `git remote -v` **查看**远程库信息 (fetch 用来取回)(push 用来推送)  
 `git remote add origin URL` 用origin代替URL  
-`git clone URL` 从URL上**克隆**远程库,使用clone不用事先`git init`  
+`git clone URL` 从URL上**克隆**远程库,使用clone不用事先`git init` ，默认只是克隆master分支   
+`git clone -b 分支名 URL`从URL中克隆对应的分支  
 `git fetch` 从远程库**下载** 但没有和本地库合并  
 `git merge` **合并**本地库操作  
 `git pull` fetch+merge操作  
@@ -105,3 +107,8 @@ PS：
 * `ctrl+L` 清屏 
 # git 别名设置
 `git config --global alias.st status` 用st来代替status  全局配置别名
+`git  config --global pull.rebase true` 设置默认选项的配置
+# git 标签操作
+`git tag -a v.01(表示版本)  -m 'v0.1'(信息)` 打标签，默认打在当前分支的当前版本
+`git tag -a v.01(表示版本) 12k9b -m 'v0.1'(信息)` 打标签打在12k9b的这个版本
+`git push --tag` 推送标签
