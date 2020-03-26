@@ -45,22 +45,31 @@ PS：
 ## git项目提交操作  
 `git status` 查看当前项目**状态**  
 `git add [filename]` **追踪**文件 添加到**暂存区**  
-`git commit -m "commit message" [filename]` **提交**文件并写提交**注释**  
+`git commit -m "commit message" [filename]` **提交**文件并写提交**注释**   
+message的格式：  
+type(scope):subject描述信息  
+type的类型：  
+- feat：新功能
+- fix：修复bug
+- style：调整格式
+- refactor：代码重构
+- chore：项目构建
+  
 `git rm --cached [filename]` 把文件从暂存区中**撤回**  
 ## 查看提交记录  
 每条记录对应一个**index**  
 `git log` 查看提交**详细**记录 多屏显示 和linux命令操作相同  
 `git log --pretty=oneline` 查看**单行**提交记录  
 `git log --online` 查看**单行**提交记录  
-`git reflog `   HEAD@{移动到当前版本需要的**步数**}
-    * 版本前进后退   
-        `git reset --hard [索引值]` 基于**索引**前进后退  
-        `git reset --hard HEAD^` 只能往后退 n个^退n个版本  
-        `git reset --hard HEAD~n` 向后回退n个版本  
-    reset **参数**对比  
-    * --soft 仅仅移动**本地库** HEAD指针
-    * --mixed 移动**本地库** 和 **暂存区**
-    * --hard 移动 **本地库** 重置 **暂存区** 和 **工作区**  
+`git reflog `   HEAD@{移动到当前版本需要的**步数**}  
+版本前进后退     
+`git reset --hard [索引值]` 基于**索引**前进后退  
+`git reset --hard HEAD^` 只能往后退 n个^退n个版本  
+`git reset --hard HEAD~n` 向后回退n个版本  
+reset **参数**对比  
+- --soft 仅仅移动**本地库** HEAD指针
+- --mixed 移动**本地库** 和 **暂存区**
+- --hard 移动 **本地库** 重置 **暂存区** 和 **工作区**  
 ## 版本差异  
 `git diff [filename]` **工作区**与**暂存区**对比  
 `git diff [本地库历史版本] [filename]` **工作区**与**本地库**对比 不带文件名 比较多个文件
@@ -68,7 +77,9 @@ PS：
 ## 分支操作
 `git branch -v` **查看**所有分支  
 `git branch [name]` **创建**分支  
-`git checkout [name]` **切换**分支  
+`git checkout [name]` **切换**分支    
+`git checkout -b [name]` 新建并切换到新的分支  
+`git branch -d [name]` **删除**分支  
 `git merge [name]` **合并**分支 先切换到master分支(被合并分支)  
 合并**冲突**
 提示冲突进入 master|merging 状态  
@@ -84,7 +95,8 @@ PS：
 `git clone URL` 从URL上**克隆**远程库,使用clone不用事先`git init` ，默认只是克隆master分支   
 `git clone -b 分支名 URL`从URL中克隆对应的分支  
 `git fetch` 从远程库**下载** 但没有和本地库合并  
-`git merge` **合并**本地库操作  
+`git merge` **合并**本地库操作,会保留两个分支的提交，并生成一个新的提交  
+`git rebase`
 `git pull` fetch+merge操作  
 如果不是基于**远程库**的最新版所做修改  
 不能**push** 要先**pull**最新版  
