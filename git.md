@@ -89,6 +89,8 @@ reset **参数**对比
  \>>>>>>  **其他分支**修改的内容  
 自己编辑完文件**删除特殊符号**后保存退出 再add commit(不能带文件名)
 
+merge会一次性解决所有冲突  
+rebase一次解决一个冲突，需要多次执行rebase，解决完之后用`git rebase --continue`继续
 ## 远程库 GitHub  
 `git remote -v` **查看**远程库信息 (fetch 用来取回)(push 用来推送)  
 `git remote add origin URL` 用origin代替URL  
@@ -96,7 +98,7 @@ reset **参数**对比
 `git clone -b 分支名 URL`从URL中克隆对应的分支  
 `git fetch` 从远程库**下载** 但没有和本地库合并  
 `git merge` **合并**本地库操作,会保留两个分支的提交，并生成一个新的提交  
-`git rebase`
+`git rebase` 合并分支，生成一个分支的提交副本，拼接到另一个分支的提交上  
 `git pull` fetch+merge操作  
 如果不是基于**远程库**的最新版所做修改  
 不能**push** 要先**pull**最新版  
