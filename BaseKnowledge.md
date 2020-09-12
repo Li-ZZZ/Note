@@ -47,30 +47,6 @@ qps = 462.9
 ## join
 - 等待调用join方法的线程结束之后，程序再继续执行，一般用于等待异步线程执行完结果之后才能继续运行的场景
 
-# Synchronized 同步锁
-https://blog.csdn.net/zjy15203167987/article/details/82531772
-## Synchronized的可见性
-https://blog.csdn.net/u012312373/article/details/44983523
-## 实现原理
-**Synchronized**可以保证方法或者代码块在运行时，同一时刻只有一个方法可以进入到临界区，同时它还可以保证共享变量的内存可见性
-
-## Synchronized的三种应用方式
-Java中每一个对象都可以作为锁，这是synchronized实现同步的基础：
-1. 普通同步方法（实例方法），锁是**当前实例对象** ，进入同步代码前要获得当前实例的锁
-2. 静态同步方法，锁是当前类的**class对象** ，进入同步代码前要获得当前类对象的锁
-3. 同步方法块，锁是**括号**里面的**对象**，对给定对象加锁，进入同步代码库前要获得给定对象的锁。
-
-例子见博客
-
-## Synchronized的可重入性
-Synchronized是可重入锁：  
-当一个线程再次请求自己持有对象锁的临界资源时，这种情况属于重入锁。  
-在java中synchronized是基于原子性的内部锁机制，是可重入的，因此在一个线程调用synchronized方法的同时，在**其方法体内部**调用该对象另一个synchronized方法，也就是说一个线程**得到一个对象锁后再次请求该对象锁**，是允许的，这就是synchronized的可重入性。  
-需要特别注意另外一种情况，当子类继承父类时，子类也是可以通过**可重入锁**调用父类的同步方法。
-
-## Synchronized底层原理
-https://blog.csdn.net/youanyyou/article/details/94514595  
-
 ## 代码块同步:  
 每个对象有一个监视器锁（Monitor），当 Monitor 被占用时就会处于锁定状态。  
 线程执行**Monitorenter** 指令时尝试获取**Monitor**的所有权，过程如下：  
@@ -119,21 +95,9 @@ JAVA对CAS的支持：
 # ABA问题
 ABA问题的根本在于**CAS**在修改变量的时候，无法记录**变量的状态**，比如修改的次数，是否修改过这个变量。这样就很容易在一个线程将A修改成B时，另一个线程又会把B修改成A,造成**CAS**多次执行的问题。
 
-## AtomicStampReference
-AtomicStampReference在CAS的基础上增加了一个标记stamp，使用这个标记可以用来觉察数据是否发生变化，给数据带上了一种实效性的检验。它有以下几个参数：
-```java
-//参数代表的含义分别是 期望值，写入的新值，期望标记，新标记值
-public boolean compareAndSet(V expected,V newReference,int expectedStamp,int newStamp);
-
-public V getRerference();
-
-public int getStamp();
-
-public void set(V newReference,int newStamp);
-```
-
 # 计算机内存模型
 https://www.cnblogs.com/lfs2640666960/p/11019798.html
+
 ## CPU和缓存一致性
 计算机在执行程序的时候，每条指令都是在**CPU**中执行的，而执行的时候，要和**数据**打交道。而计算机上面的数据，是存放在**主存**当中的，也就是计算机的**物理内存**
 
@@ -193,35 +157,7 @@ Java内存模型规定了所有的变量都存储在**主内存**中，每条线
 - volatile关键字会**禁止指令重排**。synchronized关键字保证同一时刻只允许一条线程操作
 
 ## volatile不具备原子性
-https://www.jianshu.com/p/f74044782927
-
-# hashMap
-https://blog.csdn.net/qq_37113604/article/details/81353626  
-https://blog.csdn.net/qq_37113604/article/details/81353626
-
-底层原理：  
-hashMap用数组+链表/红黑树实现  
-用key的hashcode来找到数组的下标  
-当两个key的hashcode相同时就会产生冲突，用链表来储存  
-当链表长度大于8的时候链表会转变为红黑树  
-链表存储的是键值对,调用hash方法先定位到数组下标，再遍历用equal方法来比较key
-```java
-static class Node<K,V> implements Map.Entry<K,V>
-{
- final int hash;
- final K key;
- V value;
- Node<K,V> next;
-}
-```
-特性:  
-- HashMap可以接受null键值和值，而Hashtable则不能
-- HashMap是非synchronized，线程不安全
-  
-## HashMap线程不安全
-数据不一致主要是由两个方面：
-- put的时候导致的多线程数据不一致。比如有两个线程A和B，首先A希望插入一个key-value对到HashMap中，首先计算记录所要落到的 hash桶的索引坐标，然后获取到该桶里面的链表头结点，并且遍历到了链表的最后一个元素，此时线程A的时间片用完了，而此时线程B被调度得以执行，和线程A一样执行，只不过线程B成功将记录插到了桶里面，假设线程A插入的记录计算出来的 hash桶索引和线程B要插入的记录计算出来的 hash桶索引是一样的，那么当线程B成功插入之后，线程A再次被调度运行时，它依然持认为当前元素是最后一个元素，以至于它认为它应该这样做，如此一来就覆盖了线程B插入的记录，这样线程B插入的记录就凭空消失了，造成了数据不一致的行为。
-- resize而引起死循环。这种情况发生在HashMap自动扩容时，当2个线程同时检测到元素个数超过 数组大小 × 负载因子。此时2个线程会在put()方法中调用了resize()，两个线程同时修改一个链表结构会产生一个循环链表（JDK1.7中，会出现resize前后元素顺序倒置的情况）。接下来再想通过get()获取某一个元素，就会出现死循环。
+https://www.jianshu.com/p/f74044782927  
 
 # 浏览器输入URL回车之后的过程
 https://blog.csdn.net/zjkC050818/article/details/78345819?locationNum=9&fps=1  
@@ -263,7 +199,9 @@ HTTP与HTTPS的区别
 
 # TCP
 三次握手和四次挥手  
-https://blog.csdn.net/qq_39192189/article/details/81428551  
+
+<https://blog.csdn.net/qq_39192189/article/details/81428551>
+
 为什么tcp可靠  
 [https://blog.csdn.net/Awille/article/details/79748193 ](https://www.jianshu.com/p/ )
 
@@ -271,9 +209,26 @@ https://www.zhihu.com/question/24853633
 
 【问题1】为什么连接的时候是三次握手，关闭的时候却是四次握手？
 
+https://blog.csdn.net/lengxiao1993/article/details/82771768
+
 答：因为当Server端收到Client端的SYN连接请求报文后，可以直接发送SYN+ACK报文。其中ACK报文是用来应答的，SYN报文是用来同步的。但是关闭连接时，当Server端收到FIN报文时，很可能并不会立即关闭SOCKET，所以只能先回复一个ACK报文，告诉Client端，"你发的FIN报文我收到了"。只有等到我Server端所有的报文都发送完了，我才能发送FIN报文，因此不能一起发送。故需要四步握手。
 
 ## 为什么不能是两次握手
 如果是两次握手，当c给s发送连接请求，s收到后给c发送确认响应，此时s就认为已经建立连接了，但如果该确认响应丢失了，c就不知道s是否收到自己的连接请求，就会关闭不接受后面的数据报文，而s就会向c发送报文浪费资源
 
 https://www.nowcoder.com/tutorial/94/a6035e5453f946aba0615705f94ca1e2
+
+## C++
+<https://www.cnblogs.com/zpcoding/p/10542470.html>
+
+## c和c++区别
+https://blog.csdn.net/qq_35210580/article/details/98958092 
+
+## c++STL
+<https://blog.csdn.net/u014796694/article/details/81218033#%E4%BA%8C%E3%80%81vector%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0>
+
+## 死锁产生条件
+- 互斥条件：一个资源每次只能被一个进程使用。
+- 请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放。
+- 不剥夺条件:进程已获得的资源，在末使用完之前，不能强行剥夺。
+- 循环等待条件:若干进程之间形成一种头尾相接的循环等待资源关系。
